@@ -1,5 +1,6 @@
-const router = require('express').Router()
+const router = require('express').Router();
 
+const data = require('./data')
 const test = require('./test')
 
 router.all('*', (req, res, next) => {
@@ -8,6 +9,7 @@ router.all('*', (req, res, next) => {
   next();
 })
 
+router.use('/data', data);
 router.use('/test', test);
 
 router.all('*', (req, res) => {

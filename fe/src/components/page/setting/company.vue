@@ -1,14 +1,17 @@
 <template>
   <div>
-    <div id="map"></div>
     <b-row class="mb-4">
       <b-col cols="4">
-        <input type="text" v-model="search" class="form-control" id="input-text" placeholder="검색">
+        <input type="text" v-model="search" class="form-control" id="input-text" placeholder="회사 검색">
       </b-col>
       <b-col>
       </b-col>
     </b-row>
-    <b-card-group deck class="mb-3">
+    <b-alert variant="warning" show v-if="!d.ds.length">
+      <h4><icon name="info"></icon> 새로 시작하셨나 봐요 회사가 하나도 없네요</h4>
+      <p>회사추가를 눌러서 시작하세요!</p>
+    </b-alert>
+    <b-card-group deck class="mb-3" v-else>
       <b-card no-body
               v-for="(v, i) in d.ds"
               :sub-title="v.rmk"
@@ -71,11 +74,11 @@
 
     <b-row>
       <b-col>
-        <b-btn variant="info" @click="getList">새로고침</b-btn>
+        <b-btn variant="info" @click="list">새로고침</b-btn>
         <b-btn variant="success" @click="add" >회사 추가</b-btn>
       </b-col>
       <b-col>
-        <b-pagination align="right" size="md" @input="getList" :total-rows="d.cnt" v-model="page" :per-page="s.limit">
+        <b-pagination align="right" size="md" @input="list" :total-rows="d.cnt" v-model="page" :per-page="s.limit">
         </b-pagination>
       </b-col>
     </b-row>
@@ -161,7 +164,7 @@
       };
     },
     mounted() {
-      this.getList();
+      this.list();
     },
     computed: {
       setSkip() {
@@ -207,7 +210,7 @@
       mdSetPos(m) {
         this.md.set.pos = m.latLng;
       },
-      getList() {
+      list() {
         this.$axios.get(`${this.$cfg.path.api}data/company`, {
           params: {
             draw: (this.s.draw += 1),
@@ -252,7 +255,7 @@
             return this.swalSuccess('회사 추가 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
@@ -284,7 +287,7 @@
             return this.swalSuccess('회사 삭제 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
@@ -320,7 +323,7 @@
             return this.swalSuccess('회사 정보 변경 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
@@ -358,7 +361,7 @@
             return this.swalSuccess('그룹 추가 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
@@ -399,7 +402,7 @@
             return this.swalSuccess('그룹 변경 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) this.swalError(err.message);
@@ -431,7 +434,7 @@
             return this.swalSuccess('그룹 삭제 완료');
           })
           .then(() => {
-            this.getList();
+            this.list();
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
@@ -442,7 +445,7 @@
     watch: {
       search() {
         // this.inputSync();
-        this.getList();
+        this.list();
       },
     },
     destroyed() {

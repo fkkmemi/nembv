@@ -48,5 +48,19 @@ $ cd fe
 $ npm run dev
 ```
 
+### 참고
+mongoDB read/write 되는 db와 cfg.js 파일만 이상 없으면 문제 없이 동작되는 것을 확인 했습니다.
+
+궁금한 사항은 메일 보내주시면 답변 드리겠습니다. 
+
 ### screen shot
 ![nembv](/public/images/nembv.png)
+
+### remark
+Node Express Mongo BootstrapVue 로 다양한 back,front-end의 경계를 허물고 싶은 프로젝트 입니다.
+
+[https://fkkmemi.github.io/categories/#nembv](https://fkkmemi.github.io/categories/#nembv) 
+
+이곳에서 계속 제작중이니 해당 스택 개발자들이 유용하게 쓰이길 희망합니다.
+
+한국형 게시판을 추가중입니다. 

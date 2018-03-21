@@ -4,7 +4,7 @@ const data = require('./data')
 const test = require('./test')
 
 router.all('*', (req, res, next) => {
-  console.log(req.path + ' welcome to api');
+  // console.log(req.path + ' welcome to api');
   // 미들웨어가 들어갈 곳
   next();
 })

@@ -59,7 +59,7 @@ exports.add = (req, res) => {
   //   .catch(err => res.send({ success: false, msg: err.message }));
 
   const { name } = req.body;
-  if(!name) res.send({success: false, msg : 'name not exists'});
+  if (!name) res.send({success: false, msg : 'name not exists'});
   const cp = new Company({ name: name });
   cp.save()
     .then(() => {
@@ -75,6 +75,9 @@ exports.mod = (req, res) => {
 
   const set = req.body;
   if (!Object.keys(set).length) return res.send({ success: false, msg: 'body not set' });
+  if (!set._id) return res.send({ success: false, msg: 'id not exitst' });
+  set.ut = new Date();
+
   const f = { _id: set._id };
   const s = { $set: set };
   Company.findOneAndUpdate(f, s)

@@ -6,6 +6,7 @@ import intro from '@/components/page/intro';
 import e404 from '@/components/page/e404';
 import company from '@/components/page/setting/company';
 import group from '@/components/page/setting/group';
+import talk from '@/components/page/board/talk';
 import test from '@/components/page/dev/test';
 
 Vue.use(Router);
@@ -49,6 +50,18 @@ export default new Router({
             title: '그룹 관리',
             breadcrumb: [{
               text: '환경설정 > 그룹 관리',
+              href: '/',
+            }],
+          },
+        },
+        {
+          path: '/talk',
+          name: 'talk',
+          component: talk,
+          meta: {
+            title: '잡담',
+            breadcrumb: [{
+              text: '게시판 > 잡담',
               href: '/',
             }],
           },

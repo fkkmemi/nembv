@@ -20,6 +20,11 @@
               그룹 관리
             </topItem>
           </b-nav-item-dropdown>
+          <b-nav-item-dropdown text="게시판">
+            <topItem link="talk" icon="sss">
+              잡담
+            </topItem>
+          </b-nav-item-dropdown>
           <b-nav-item-dropdown text="테스트">
             <topItem link="test" icon="sss">
               test

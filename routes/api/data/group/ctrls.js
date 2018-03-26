@@ -69,7 +69,7 @@ exports.add = (req, res) => {
 exports.mod = (req, res) => {
   const set = req.body;
   if (!Object.keys(set).length) return res.send({ success: false, msg: 'body not set' });
-  if (!set._id) return res.send({ success: false, msg: 'id not exitst' });
+  if (!set._id) return res.send({ success: false, msg: 'id not exists' });
   const f = { _id: set._id };
   const s = { $set: set };
   Group.findOneAndUpdate(f, s)

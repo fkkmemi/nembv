@@ -5,7 +5,7 @@
         <input type="text" v-model="filter" class="form-control" id="input-text" placeholder="검색 제목">
       </b-col>
       <b-col cols="6">
-        <b-form-group horizontal label="Per" class="mb-0">
+        <b-form-group>
           <b-form-select :options="pageOptions" v-model="perPage" />
         </b-form-group>
       </b-col>
@@ -58,9 +58,38 @@
           <b-card-body>
             <p class="card-text" style="white-space: pre;">{{row.item.content}}</p>
           </b-card-body>
-          <!--<ul>-->
-            <!--<li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value}}</li>-->
-          <!--</ul>-->
+
+          <b-list-group flush>
+            <b-list-group-item v-for="(cmt) in row.item.cmt_ids" :key="cmt._id">
+              <b-row>
+                <b-col cols="2">
+                  <b-badge>{{ cmt.id }}</b-badge>
+                </b-col>
+                <b-col cols="6">
+                  <span style="white-space: pre;">  {{ cmt.content}}</span>
+                </b-col>
+                <b-col cols="2">
+                  <small class="text-muted"> {{ cmt.ip }} | {{ ago(cmt.ut) }}</small>
+                </b-col>
+                <b-col cols="2">
+                  <b-button-group class="float-right" size="sm">
+                    <b-btn variant="outline-warning" @click="mdModCmtOpen(cmt)"><icon name="pencil"></icon></b-btn>
+                    <b-btn variant="outline-danger" @click="delCmt(cmt)"><icon name="trash"></icon></b-btn>
+                  </b-button-group>
+                </b-col>
+              </b-row>
+
+
+            </b-list-group-item>
+            <b-list-group-item>
+              <span> 새 댓글 작성 </span>
+              <b-button-group class="float-right" size="sm">
+                <b-btn variant="outline-success" @click="mdAddCmtOpen(row.item)"><icon name="plus"></icon></b-btn>
+              </b-button-group>
+            </b-list-group-item>
+
+          </b-list-group>
+
           <b-card-footer>
             <small class="text-muted">{{ ago(row.item.ut) }}</small>
             <b-button-group class="float-right">
@@ -94,8 +123,8 @@
     <b-modal ref="mdAdd" hide-footer title="새로운 글 작성">
       <b-form @submit="add">
         <b-form-group label="이름:"
-                      label-for="fid">
-          <b-form-input id="fid"
+                      label-for="f-a-id">
+          <b-form-input id="f-a-id"
                         type="text"
                         v-model="form.id"
                         required
@@ -104,8 +133,8 @@
         </b-form-group>
 
         <b-form-group label="제목:"
-                      label-for="ftitle">
-          <b-form-input id="ftitle"
+                      label-for="f-a-title">
+          <b-form-input id="f-a-title"
                         type="text"
                         v-model="form.title"
                         required
@@ -114,8 +143,8 @@
         </b-form-group>
 
         <b-form-group label="글"
-                      label-for="fcontent">
-          <b-form-textarea id="fcontent"
+                      label-for="f-a-content">
+          <b-form-textarea id="f-a-content"
                            v-model="form.content"
                            placeholder="재미있는 글"
                            :rows="10"
@@ -130,8 +159,8 @@
     <b-modal ref="mdMod" hide-footer title="글 수정하기">
       <b-form @submit="mod">
         <b-form-group label="이름:"
-                      label-for="fid">
-          <b-form-input id="fid"
+                      label-for="f-m-id">
+          <b-form-input id="f-m-id"
                         type="text"
                         v-model="form.id"
                         required
@@ -140,8 +169,8 @@
         </b-form-group>
 
         <b-form-group label="제목:"
-                      label-for="ftitle">
-          <b-form-input id="ftitle"
+                      label-for="f-m-title">
+          <b-form-input id="f-m-title"
                         type="text"
                         v-model="form.title"
                         required
@@ -150,8 +179,8 @@
         </b-form-group>
 
         <b-form-group label="글"
-                      label-for="fcontent">
-          <b-form-textarea id="fcontent"
+                      label-for="f-m-content">
+          <b-form-textarea id="f-m-content"
                            v-model="form.content"
                            placeholder="재미있는 글"
                            :rows="10"
@@ -161,12 +190,60 @@
 
         <b-btn type="submit" variant="warning" class="float-right">글 수정</b-btn>
       </b-form>
-
-
-      <!--<div slot="modal-footer">-->
-        <!--<b-btn type="submit" class="float-right" variant="primary">저장</b-btn>-->
-      <!--</div>-->
     </b-modal>
+
+    <b-modal ref="mdAddCmt" hide-footer title="댓글 작성">
+      <b-form @submit="addCmt">
+        <b-form-group label="이름:"
+                      label-for="f-a-c-id">
+          <b-form-input id="f-a-c-cid"
+                        type="text"
+                        v-model="formCmt.id"
+                        required
+                        placeholder="홍길동">
+          </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="글"
+                      label-for="f-a-c-content">
+          <b-form-textarea id="f-a-c-content"
+                           v-model="formCmt.content"
+                           placeholder="재미있는 글"
+                           :rows="10"
+                           :max-rows="20">
+          </b-form-textarea>
+        </b-form-group>
+
+        <b-btn type="submit" variant="primary" class="float-right">글 쓰기</b-btn>
+      </b-form>
+    </b-modal>
+
+    <b-modal ref="mdModCmt" hide-footer title="댓글 수정하기">
+      <b-form @submit="modCmt">
+        <b-form-group label="이름:"
+                      label-for="f-m-c-id">
+          <b-form-input id="f-m-c-id"
+                        type="text"
+                        v-model="formCmt.id"
+                        required
+                        placeholder="홍길동">
+          </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="글"
+                      label-for="f-m-c-ontent">
+          <b-form-textarea id="f-m-c-ontent"
+                           v-model="formCmt.content"
+                           placeholder="재미있는 글"
+                           :rows="10"
+                           :max-rows="20">
+          </b-form-textarea>
+        </b-form-group>
+
+        <b-btn type="submit" variant="warning" class="float-right">글 수정</b-btn>
+      </b-form>
+    </b-modal>
+
   </div>
 </template>
 
@@ -229,6 +306,12 @@
           title: '',
           content: '',
         },
+        formCmt: {
+          bd_id: '',
+          _id: '',
+          id: '',
+          content: '',
+        },
       };
     },
     // props: ['items'],
@@ -284,6 +367,20 @@
         this.form.content = v.content;
         this.$refs.mdMod.show();
       },
+      mdAddCmtOpen(v) {
+        this.formCmt.bd_id = v._id;
+        this.formCmt._id = '';
+        this.formCmt.id = '';
+        this.formCmt.content = '';
+        this.$refs.mdAddCmt.show();
+      },
+      mdModCmtOpen(v) {
+        this.formCmt.bd_id = v._id;
+        this.formCmt._id = v._id;
+        this.formCmt.id = v.id;
+        this.formCmt.content = v.content;
+        this.$refs.mdModCmt.show();
+      },
       ago(t) {
         return this.$moment(t).fromNow();
       },
@@ -337,6 +434,7 @@
             if (!res.data.success) throw new Error(res.data.msg);
             r.item.cntView = res.data.d.cntView;
             r.item.content = res.data.d.content;
+            r.item.cmt_ids = res.data.d.cmt_ids;
             // console.log(res.data.d);
             // console.log(r.item);
             this.isBusy = false;
@@ -425,11 +523,83 @@
             this.swalWarning('글 삭제 취소');
           });
       },
-    },
-    watch: {
-      search() {
-        // this.inputSync();
-        // this.list();
+      addCmt(evt) {
+        evt.preventDefault();
+        this.$axios.post(`${this.$cfg.path.api}data/comment`, this.formCmt)
+          .then((res) => {
+            if (!res.data.success) throw new Error(res.data.msg);
+            return this.swalSuccess('댓글 추가 완료');
+          })
+          .then(() => {
+            this.$refs.mdAddCmt.hide();
+            this.refresh();
+          })
+          .catch((err) => {
+            this.swalError(err.message);
+          });
+      },
+      modCmt() {
+        this.$swal({
+          title: '댓글 수정 변경',
+          dangerMode: true,
+          buttons: {
+            cancel: {
+              text: '취소',
+              visible: true,
+            },
+            confirm: {
+              text: '수정',
+            },
+          },
+        })
+          .then((res) => {
+            if (!res) throw new Error('');
+            return this.$axios.put(`${this.$cfg.path.api}data/comment`, this.formCmt);
+          })
+          .then((res) => {
+            if (!res.data.success) throw new Error(res.data.msg);
+            return this.swalSuccess('댓글 수정 완료');
+          })
+          .then(() => {
+            this.$refs.mdModCmt.hide();
+            this.refresh();
+          })
+          .catch((err) => {
+            if (err.message) this.swalError(err.message);
+            else this.swalWarning('댓글 수정 취소');
+          });
+      },
+      delCmt(cmt) {
+        this.$swal({
+          title: '댓글 삭제',
+          dangerMode: true,
+          buttons: {
+            cancel: {
+              text: '취소',
+              visible: true,
+            },
+            confirm: {
+              text: '삭제',
+            },
+          },
+        })
+          .then((res) => {
+            if (!res) throw new Error('');
+            return this.$axios.delete(`${this.$cfg.path.api}data/comment`, {
+              params: { _id: cmt._id },
+            });
+          })
+          .then((res) => {
+            if (!res.data.success) throw new Error(res.data.msg);
+            return this.swalSuccess('댓글 삭제 완료');
+          })
+          .then(() => {
+            this.refresh();
+          })
+          .catch((err) => {
+            if (err.message) return this.swalError(err.message);
+            this.swalWarning('댓글 삭제 취소');
+          });
       },
     },
   };

@@ -51,6 +51,7 @@ exports.read = (req, res) => {
   Board.findOneAndUpdate(f, s, o)
     // .where('_id').equals(_id)
     // .select('content')
+    .populate('cmt_ids')
     .then((d) => {
       res.send({success: true, d: d});
     })
@@ -61,7 +62,6 @@ exports.read = (req, res) => {
 
 exports.add = (req, res) => {
   const { id, title, content } = req.body;
-  console.log(req.body);
 
   if (!id) res.send({success: false, msg : 'id not exists'});
   if (!content) res.send({success: false, msg : 'content not exists'});
@@ -70,6 +70,7 @@ exports.add = (req, res) => {
     id: id,
     title: title,
     content: content,
+    ip: req.ip,
   });
   bd.save()
     .then(() => {
@@ -84,8 +85,9 @@ exports.mod = (req, res) => {
   const set = req.body;
 
   if (!Object.keys(set).length) return res.send({ success: false, msg: 'body not set' });
-  if (!set._id) return res.send({ success: false, msg: 'id not exitst' });
+  if (!set._id) return res.send({ success: false, msg: 'id not exists' });
   set.ut = new Date();
+  set.ip = req.ip;
 
   const f = { _id: set._id };
   const s = { $set: set };

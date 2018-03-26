@@ -1,23 +1,24 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
-import BootstrapVue from "bootstrap-vue";
-import App from './App';
-import router from './router';
+import BootstrapVue from 'bootstrap-vue';
 import axios from 'axios';
 import moment from 'moment';
 import swal from 'sweetalert';
 import Icon from 'vue-awesome/components/Icon';
-import fam from 'fontawesome-markers';
 import * as VueGoogleMaps from 'vue2-google-maps';
-import 'vue-awesome/icons'
+import App from './App';
+import router from './router';
 
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css';
+import '../node_modules/vue-awesome/icons';
+import fam from '../node_modules/fontawesome-markers/fontawesome-markers.json';
 import cfg from '../static/cfg';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-
 moment.locale('ko');
+
+if (process.env.NODE_ENV === 'development') cfg.path.api = 'http://localhost:3000/api/';
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cfg = cfg;

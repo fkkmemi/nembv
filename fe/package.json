@@ -18,7 +18,7 @@
     "bootstrap": "^4.0.0-beta.2",
     "bootstrap-vue": "latest",
     "fontawesome-markers": "^4.6.1",
-    "jquery": "^1.12.4",
+    "jquery": "^3.0.0",
     "moment": "^2.21.0",
     "popper.js": "^1.12.9",
     "sweetalert": "^2.1.0",

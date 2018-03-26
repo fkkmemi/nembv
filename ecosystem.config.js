@@ -1,4 +1,4 @@
-import cfg from './cfg/cfg.js'
+const cfg = require('./cfg/cfg');
 
 module.exports = {
   /**

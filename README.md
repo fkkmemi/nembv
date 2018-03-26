@@ -26,7 +26,14 @@ module.exports = {
     // url : 'mongodb+srv://id:pwd@cluster0-xxx.net/yyy' // 3.6이상
   },
   web: {
-    // 추후 http, https, port등 지
+    cors: true,
+    // 추후 http, https, port등 지정
+  },
+  pm2: {
+    user: 'admin',
+    host: 'xx.com',
+    port: '22',
+    path: '/var/www/nembv',
   },
 };
 ```

@@ -7,6 +7,7 @@ import e404 from '@/components/page/e404';
 import company from '@/components/page/setting/company';
 import group from '@/components/page/setting/group';
 import talk from '@/components/page/board/talk';
+import qna from '@/components/page/board/qna';
 import test from '@/components/page/dev/test';
 
 Vue.use(Router);
@@ -62,6 +63,18 @@ export default new Router({
             title: '잡담',
             breadcrumb: [{
               text: '게시판 > 잡담',
+              href: '/',
+            }],
+          },
+        },
+        {
+          path: '/qna',
+          name: 'qna',
+          component: qna,
+          meta: {
+            title: 'Q&A',
+            breadcrumb: [{
+              text: '게시판 > Q&A',
               href: '/',
             }],
           },

@@ -250,7 +250,7 @@
 <script>
 
   export default {
-    name: 'talk',
+    name: 'qna',
     data() {
       return {
         fields: [
@@ -402,7 +402,7 @@
         this.sortBy = ctx.sortBy;
         this.sortDesc = ctx.sortDesc;
         this.isBusy = true;
-        const p = this.$axios.get(`${this.$cfg.path.api}data/board/talk`, {
+        const p = this.$axios.get(`${this.$cfg.path.api}data/board/qna`, {
           params: {
             draw: (this.draw += 1),
             search: this.filter,
@@ -429,7 +429,7 @@
         if (r.detailsShowing) return;
         const _id = r.item._id;
         this.isBusy = true;
-        this.$axios.get(`${this.$cfg.path.api}data/board/talk/${_id}`)
+        this.$axios.get(`${this.$cfg.path.api}data/board/qna/${_id}`)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
             r.item.cntView = res.data.d.cntView;
@@ -446,7 +446,7 @@
       },
       add(evt) {
         evt.preventDefault();
-        this.$axios.post(`${this.$cfg.path.api}data/board/talk`, this.form)
+        this.$axios.post(`${this.$cfg.path.api}data/board/qna`, this.form)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
             return this.swalSuccess('글 작성 완료');
@@ -475,7 +475,7 @@
         })
           .then((sv) => {
             if (!sv) throw new Error('');
-            return this.$axios.put(`${this.$cfg.path.api}data/board/talk`, this.form);
+            return this.$axios.put(`${this.$cfg.path.api}data/board/qna`, this.form);
           })
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
@@ -507,7 +507,7 @@
         })
           .then((sv) => {
             if (!sv) throw new Error('');
-            return this.$axios.delete(`${this.$cfg.path.api}data/board/talk/`, {
+            return this.$axios.delete(`${this.$cfg.path.api}data/board/qna/`, {
               params: { _id: v._id },
             });
           })
@@ -525,7 +525,7 @@
       },
       addCmt(evt) {
         evt.preventDefault();
-        this.$axios.post(`${this.$cfg.path.api}data/board/talk/comment`, this.formCmt)
+        this.$axios.post(`${this.$cfg.path.api}data/board/qna/comment`, this.formCmt)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
             return this.swalSuccess('댓글 추가 완료');
@@ -554,7 +554,7 @@
         })
           .then((res) => {
             if (!res) throw new Error('');
-            return this.$axios.put(`${this.$cfg.path.api}data/board/talk/comment`, this.formCmt);
+            return this.$axios.put(`${this.$cfg.path.api}data/board/qna/comment`, this.formCmt);
           })
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
@@ -585,7 +585,7 @@
         })
           .then((res) => {
             if (!res) throw new Error('');
-            return this.$axios.delete(`${this.$cfg.path.api}data/board/talk/comment`, {
+            return this.$axios.delete(`${this.$cfg.path.api}data/board/qna/comment`, {
               params: { _id: cmt._id },
             });
           })

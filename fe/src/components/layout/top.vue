@@ -24,6 +24,9 @@
             <topItem link="talk" icon="sss">
               잡담
             </topItem>
+            <topItem link="qna" icon="sss">
+              Q&A
+            </topItem>
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="테스트">
             <topItem link="test" icon="sss">

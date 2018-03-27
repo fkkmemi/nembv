@@ -2,8 +2,14 @@ const mongoose = require('mongoose');
 const Board = require('../../../../../models/boards');
 const Comment = require('../../../../../models/comments');
 
-const Talk = mongoose.model('Talk', Board.schema);
-const TalkComment = mongoose.model('TalkComment', Comment.schema);
+const boardSchema = Board.schema.obj;
+const commentSchema = Comment.schema.obj;
+
+boardSchema.cmt_ids = [{ type: mongoose.Schema.Types.ObjectId, ref: 'TalkComment' }];
+commentSchema.bd_id = { type: mongoose.Schema.Types.ObjectId, ref: 'Talk', index: true, required: true };
+
+const Talk = mongoose.model('Talk', boardSchema);
+const TalkComment = mongoose.model('TalkComment', commentSchema);
 
 exports.list = (req, res) => {
   let { draw, search, skip, limit, order, sort } = req.query;
@@ -47,6 +53,9 @@ exports.list = (req, res) => {
     });
 };
 
+Talk.findOne()
+  .populate('cmt_ids')
+  .then((v) => console.log(v));
 
 exports.read = (req, res) => {
   const f = { _id: req.params._id };

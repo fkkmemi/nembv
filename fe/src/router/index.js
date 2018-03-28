@@ -4,6 +4,8 @@ import Hello from '@/components/page/Hello';
 import index from '@/components/page/index';
 import intro from '@/components/page/intro';
 import e404 from '@/components/page/e404';
+import sign from '@/components/page/sign';
+import register from '@/components/page/register';
 import company from '@/components/page/setting/company';
 import group from '@/components/page/setting/group';
 import talk from '@/components/page/board/talk';
@@ -92,6 +94,17 @@ export default new Router({
           },
         },
       ],
+    },
+    {
+      path: '/sign',
+      name: 'sign',
+      component: sign,
+    },
+
+    {
+      path: '/register',
+      name: 'register',
+      component: register,
     },
     {
       path: '/hello',

@@ -26,7 +26,9 @@ module.exports = {
     // url : 'mongodb+srv://id:pwd@cluster0-xxx.net/yyy' // 3.6이상
   },
   web: {
+    host: 'localhost:3000',
     cors: true,
+    secret_key : 'veryhardultrakey',
     // 추후 http, https, port등 지정
   },
   pm2: {

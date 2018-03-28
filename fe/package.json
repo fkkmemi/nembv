@@ -24,6 +24,7 @@
     "sweetalert": "^2.1.0",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.5",
+    "vue-cookie": "^1.1.4",
     "vue-router": "^3.0.1",
     "vue2-google-maps": "^0.8.11"
   },

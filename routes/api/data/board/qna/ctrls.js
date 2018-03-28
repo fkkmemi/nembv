@@ -144,15 +144,17 @@ exports.addCmt = (req, res) => {
     content: content,
     ip: req.ip,
   });
+  let cr;
   cmt.save()
     .then((r) => {
+      cr = r;
       const f = { _id: r.bd_id };
       const s = { $addToSet: { cmt_ids: r._id } };
       return QnA.updateOne(f, s);
     })
     .then((r) => {
       if (!r.nModified) return res.send({ success: false, msg : 'already QnA' });
-      res.send({ success: true });
+      res.send({ success: true, d: cr });
     })
     .catch((err) => {
       res.send({ success: false, msg : err.message });

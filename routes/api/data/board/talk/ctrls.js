@@ -53,10 +53,6 @@ exports.list = (req, res) => {
     });
 };
 
-Talk.findOne()
-  .populate('cmt_ids')
-  .then((v) => console.log(v));
-
 exports.read = (req, res) => {
   const f = { _id: req.params._id };
   const s = { $inc: { cntView: 1 } };
@@ -147,15 +143,17 @@ exports.addCmt = (req, res) => {
     content: content,
     ip: req.ip,
   });
+  let cr;
   cmt.save()
     .then((r) => {
+      cr = r;
       const f = { _id: r.bd_id };
       const s = { $addToSet: { cmt_ids: r._id } };
       return Talk.updateOne(f, s);
     })
     .then((r) => {
       if (!r.nModified) return res.send({ success: false, msg : 'already Talk' });
-      res.send({ success: true });
+      res.send({ success: true, d: cr });
     })
     .catch((err) => {
       res.send({ success: false, msg : err.message });
@@ -172,10 +170,11 @@ exports.modCmt = (req, res) => {
 
   const f = { _id: set._id };
   const s = { $set: set };
+  const o = { new: true };
 
-  TalkComment.findOneAndUpdate(f, s)
-    .then(() => {
-      res.send({ success: true });
+  TalkComment.findOneAndUpdate(f, s, o)
+    .then((d) => {
+      res.send({ success: true, d: d });
     })
     .catch((err) => {
       res.send({ success: false, msg: err.message });

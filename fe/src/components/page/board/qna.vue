@@ -60,7 +60,7 @@
           </b-card-body>
 
           <b-list-group flush>
-            <b-list-group-item v-for="(cmt) in row.item.cmt_ids" :key="cmt._id">
+            <b-list-group-item v-for="(cmt, ci) in row.item.cmt_ids" :key="cmt._id">
               <b-row>
                 <b-col cols="2">
                   <b-badge>{{ cmt.id }}</b-badge>
@@ -73,8 +73,8 @@
                 </b-col>
                 <b-col cols="2">
                   <b-button-group class="float-right" size="sm">
-                    <b-btn variant="outline-warning" @click="mdModCmtOpen(cmt)"><icon name="pencil"></icon></b-btn>
-                    <b-btn variant="outline-danger" @click="delCmt(cmt)"><icon name="trash"></icon></b-btn>
+                    <b-btn variant="outline-warning" @click="mdModCmtOpen(row.item, cmt)"><icon name="pencil"></icon></b-btn>
+                    <b-btn variant="outline-danger" @click="delCmt(row.item, cmt, ci)"><icon name="trash"></icon></b-btn>
                   </b-button-group>
                 </b-col>
               </b-row>
@@ -115,7 +115,7 @@
           :total-rows="totalRows"
           v-model="currentPage"
           :per-page="perPage"
-          >
+        >
         </b-pagination>
       </b-col>
     </b-row>
@@ -196,7 +196,7 @@
       <b-form @submit="addCmt">
         <b-form-group label="이름:"
                       label-for="f-a-c-id">
-          <b-form-input id="f-a-c-cid"
+          <b-form-input id="f-a-c-id"
                         type="text"
                         v-model="formCmt.id"
                         required
@@ -220,7 +220,7 @@
 
     <b-modal ref="mdModCmt" hide-footer title="댓글 수정하기">
       <b-form @submit="modCmt">
-        <b-form-group label="이름:"
+        <b-form-group label="이름"
                       label-for="f-m-c-id">
           <b-form-input id="f-m-c-id"
                         type="text"
@@ -231,8 +231,8 @@
         </b-form-group>
 
         <b-form-group label="글"
-                      label-for="f-m-c-ontent">
-          <b-form-textarea id="f-m-c-ontent"
+                      label-for="f-m-c-content">
+          <b-form-textarea id="f-m-c-content"
                            v-model="formCmt.content"
                            placeholder="재미있는 글"
                            :rows="10"
@@ -253,6 +253,7 @@
     name: 'qna',
     data() {
       return {
+        path: 'data/board/qna',
         fields: [
           {
             key: '_id',
@@ -312,6 +313,8 @@
           id: '',
           content: '',
         },
+        row: {},
+        rowCmt: {},
       };
     },
     // props: ['items'],
@@ -365,20 +368,25 @@
         this.form.id = v.id;
         this.form.title = v.title;
         this.form.content = v.content;
+        this.row = v;
         this.$refs.mdMod.show();
       },
-      mdAddCmtOpen(v) {
-        this.formCmt.bd_id = v._id;
+      mdAddCmtOpen(r) {
+        this.formCmt.bd_id = r._id;
         this.formCmt._id = '';
         this.formCmt.id = '';
         this.formCmt.content = '';
+        this.row = r;
         this.$refs.mdAddCmt.show();
       },
-      mdModCmtOpen(v) {
-        this.formCmt.bd_id = v._id;
+      mdModCmtOpen(r, v) {
+        this.formCmt.bd_id = r._id;
         this.formCmt._id = v._id;
         this.formCmt.id = v.id;
         this.formCmt.content = v.content;
+        this.row = r;
+        this.rowCmt = v;
+        // this.formCmt = v;
         this.$refs.mdModCmt.show();
       },
       ago(t) {
@@ -391,18 +399,13 @@
         this.$refs.table.refresh();
       },
       sortingChanged(ctx) {
-        this.sortBy = ctx.sortBy;
-        this.sortDesc = ctx.sortDesc;
-        // if (ctx.sortDesc) this.s.order = -1;
-        // else this.s.order = 1;
-        this.list();
-        // console.log(ctx);
+        // todo: comment sort
       },
       list(ctx) {
         this.sortBy = ctx.sortBy;
         this.sortDesc = ctx.sortDesc;
         this.isBusy = true;
-        const p = this.$axios.get(`${this.$cfg.path.api}data/board/qna`, {
+        const p = this.$axios.get(`${this.$cfg.path.api}${this.path}`, {
           params: {
             draw: (this.draw += 1),
             search: this.filter,
@@ -429,14 +432,12 @@
         if (r.detailsShowing) return;
         const _id = r.item._id;
         this.isBusy = true;
-        this.$axios.get(`${this.$cfg.path.api}data/board/qna/${_id}`)
+        this.$axios.get(`${this.$cfg.path.api}${this.path}/${_id}`)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
             r.item.cntView = res.data.d.cntView;
             r.item.content = res.data.d.content;
             r.item.cmt_ids = res.data.d.cmt_ids;
-            // console.log(res.data.d);
-            // console.log(r.item);
             this.isBusy = false;
           })
           .catch((err) => {
@@ -446,7 +447,7 @@
       },
       add(evt) {
         evt.preventDefault();
-        this.$axios.post(`${this.$cfg.path.api}data/board/qna`, this.form)
+        this.$axios.post(`${this.$cfg.path.api}${this.path}`, this.form)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
             return this.swalSuccess('글 작성 완료');
@@ -475,7 +476,7 @@
         })
           .then((sv) => {
             if (!sv) throw new Error('');
-            return this.$axios.put(`${this.$cfg.path.api}data/board/qna`, this.form);
+            return this.$axios.put(`${this.$cfg.path.api}${this.path}`, this.form);
           })
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
@@ -483,7 +484,10 @@
           })
           .then(() => {
             this.$refs.mdMod.hide();
-            this.refresh();
+            this.row.id = this.form.id;
+            this.row.title = this.form.title;
+            this.row.content = this.form.content;
+            // this.refresh();
             // this.list(); // todo: instead one article..
           })
           .catch((err) => {
@@ -507,7 +511,7 @@
         })
           .then((sv) => {
             if (!sv) throw new Error('');
-            return this.$axios.delete(`${this.$cfg.path.api}data/board/qna/`, {
+            return this.$axios.delete(`${this.$cfg.path.api}${this.path}`, {
               params: { _id: v._id },
             });
           })
@@ -525,14 +529,14 @@
       },
       addCmt(evt) {
         evt.preventDefault();
-        this.$axios.post(`${this.$cfg.path.api}data/board/qna/comment`, this.formCmt)
+        this.$axios.post(`${this.$cfg.path.api}${this.path}/comment`, this.formCmt)
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
+            this.row.cmt_ids.push(res.data.d);
             return this.swalSuccess('댓글 추가 완료');
           })
           .then(() => {
             this.$refs.mdAddCmt.hide();
-            this.refresh();
           })
           .catch((err) => {
             this.swalError(err.message);
@@ -554,7 +558,7 @@
         })
           .then((res) => {
             if (!res) throw new Error('');
-            return this.$axios.put(`${this.$cfg.path.api}data/board/qna/comment`, this.formCmt);
+            return this.$axios.put(`${this.$cfg.path.api}${this.path}/comment`, this.formCmt);
           })
           .then((res) => {
             if (!res.data.success) throw new Error(res.data.msg);
@@ -562,14 +566,17 @@
           })
           .then(() => {
             this.$refs.mdModCmt.hide();
-            this.refresh();
+            this.rowCmt.id = this.formCmt.id;
+            this.rowCmt.content = this.formCmt.content;
+            this.rowCmt.ut = new Date();
+            // this.refresh();
           })
           .catch((err) => {
             if (err.message) this.swalError(err.message);
             else this.swalWarning('댓글 수정 취소');
           });
       },
-      delCmt(cmt) {
+      delCmt(r, cmt, i) {
         this.$swal({
           title: '댓글 삭제',
           dangerMode: true,
@@ -585,7 +592,7 @@
         })
           .then((res) => {
             if (!res) throw new Error('');
-            return this.$axios.delete(`${this.$cfg.path.api}data/board/qna/comment`, {
+            return this.$axios.delete(`${this.$cfg.path.api}${this.path}/comment`, {
               params: { _id: cmt._id },
             });
           })
@@ -594,7 +601,7 @@
             return this.swalSuccess('댓글 삭제 완료');
           })
           .then(() => {
-            this.refresh();
+            r.cmt_ids.splice(i, 1);
           })
           .catch((err) => {
             if (err.message) return this.swalError(err.message);
